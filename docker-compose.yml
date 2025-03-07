@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    ports:
+      - "${MONGO_PORT}:27017"
+    command: ["mongod", "--auth"]
+    networks:
+      - oz-tech-test
+
+networks:
+  oz-tech-test:
+    driver: bridge
