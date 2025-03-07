@@ -1,5 +1,18 @@
 import * as app from "express";
 import { UserModel } from "./models";
+import * as dotenv from "dotenv";
+import { validateCheckZodVariables } from "./env.validation";
+
+dotenv.config();
+
+const config = {
+  MONGO_USERNAME: process.env.MONGO_USERNAME,
+  MONGO_HOST: process.env.MONGO_HOST,
+  MONGO_PASSWORD: process.env.MONGO_PASSWORD,
+  MONGO_PORT: process.env.MONGO_PORT,
+  MONGO_DB: process.env.MONGO_DB,
+};
+validateCheckZodVariables(config);
 
 const server = app();
 const router = app.Router();
