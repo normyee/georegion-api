@@ -3,6 +3,7 @@ import { UserModel } from "./models";
 import * as dotenv from "dotenv";
 import { validateCheckZodVariables } from "./env.validation";
 import { logger } from "./logger";
+import "./index";
 
 dotenv.config();
 
