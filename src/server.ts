@@ -2,6 +2,7 @@ import * as app from "express";
 import { UserModel } from "./models";
 import * as dotenv from "dotenv";
 import { validateCheckZodVariables } from "./env.validation";
+import { logger } from "./logger";
 
 dotenv.config();
 
@@ -76,6 +77,6 @@ router.put("/users/:id", async (req, res) => {
 
 server.use(router);
 
-export default server.listen(3003, () =>
-  console.log("Server is running on port 3003")
-);
+export default server.listen(3003, () => {
+  logger.info("Server is running on port 3003");
+});
