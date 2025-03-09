@@ -1,9 +1,10 @@
 import * as app from "express";
-import { UserModel } from "./models";
+import { UserModel } from "./database/orm/mongoose/models/models";
 import * as dotenv from "dotenv";
 import { validateCheckZodVariables } from "./env.validation";
 import { logger } from "./logger";
-import "./index";
+import { MongoBoostrap } from "./database/orm/mongoose";
+import { CreateUserRepositoryMongoAdapter } from "./database/orm/mongoose/repositories/users/create-user.repository";
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ const config = {
   MONGO_DB: process.env.MONGO_DB,
 };
 validateCheckZodVariables(config);
+
+const mongo = MongoBoostrap.getInstance();
 
 const server = app();
 const router = app.Router();
@@ -78,6 +81,12 @@ router.put("/users/:id", async (req, res) => {
 
 server.use(router);
 
-export default server.listen(3003, () => {
+export default server.listen(3003, async () => {
   logger.info("Server is running on port 3003");
+
+  await mongo.startManagerConnection({
+    host: config.MONGO_HOST,
+    port: config.MONGO_PORT,
+    name: config.MONGO_DB,
+  });
 });
