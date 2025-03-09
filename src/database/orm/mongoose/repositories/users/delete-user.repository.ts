@@ -1,11 +1,10 @@
-import { getModelForClass } from "@typegoose/typegoose";
-import { User } from "../../models/models";
-import { User as UserEntity } from "../../../../../entity/user.model";
+import { User } from "../../../../../entity/user.entity";
 import mongoose from "mongoose";
+import { UserModel } from "../../models/user.model";
 
 export class DeleteUserRepositoryMongoAdapter {
-  private _user = getModelForClass(User);
-  public async execute(data: UserEntity): Promise<UserEntity> {
+  private _user = UserModel;
+  public async execute(data: User): Promise<User> {
     const session = await mongoose.startSession();
     let deletedUser = null;
 
@@ -23,7 +22,7 @@ export class DeleteUserRepositoryMongoAdapter {
       await session.commitTransaction();
       session.endSession();
 
-      return new UserEntity(
+      return new User(
         deletedUser._id,
         deletedUser.name,
         deletedUser.email,

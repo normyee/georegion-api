@@ -1,18 +1,17 @@
-import { getModelForClass } from "@typegoose/typegoose";
-import { User } from "../../models/models";
-import { User as UserEntity } from "../../../../../entity/user.model";
+import { User } from "../../../../../entity/user.entity";
+import { UserModel } from "../../models/user.model";
 
 export class GetUserRepositoryMongoAdapter {
-  private _user = getModelForClass(User);
+  private _user = UserModel;
 
-  public async execute(data: UserEntity): Promise<UserEntity> {
+  public async execute(data: User): Promise<User> {
     const foundUser = await this._user.findOne({ _id: data.id }).exec();
 
     if (!foundUser) {
       throw new Error("User not found");
     }
 
-    return new UserEntity(
+    return new User(
       foundUser._id,
       foundUser.name,
       foundUser.email,

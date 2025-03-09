@@ -1,32 +1,31 @@
-import { getModelForClass } from "@typegoose/typegoose";
-import { User } from "../../models/models";
-import { User as UserEntity } from "../../../../../entity/user.model";
+import { User } from "../../../../../entity/user.entity";
 import mongoose from "mongoose";
+import { UserModel } from "../../models/user.model";
 
 export class CreateUserRepositoryMongoAdapter {
-  private _user = getModelForClass(User);
-  public async execute(data: UserEntity): Promise<any> {
-    const session = await mongoose.startSession();
+  private _user = UserModel;
 
+  public async execute(data: User): Promise<User> {
+    const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-      const addedUser = new this._user(
-        {
-          name: data.name,
-          email: data.email,
-          address: data.address,
-          coordinates: data.coordinates,
-        },
+      const [addedUser] = await this._user.create(
+        [
+          {
+            name: data.name,
+            email: data.email,
+            address: data.address,
+            coordinates: data.coordinates,
+          },
+        ],
         { session }
       );
-
-      await addedUser.save({ session });
 
       await session.commitTransaction();
       session.endSession();
 
-      return new UserEntity(
+      return new User(
         addedUser._id,
         addedUser.name,
         addedUser.email,
@@ -36,7 +35,6 @@ export class CreateUserRepositoryMongoAdapter {
     } catch (error) {
       await session.abortTransaction();
       session.endSession();
-
       throw error;
     }
   }

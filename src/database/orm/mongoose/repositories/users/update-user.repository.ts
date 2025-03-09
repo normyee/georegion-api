@@ -1,12 +1,11 @@
-import { getModelForClass } from "@typegoose/typegoose";
-import { User } from "../../models/models";
-import { User as UserEntity } from "../../../../../entity/user.model";
+import { User } from "../../../../../entity/user.entity";
 import mongoose from "mongoose";
+import { UserModel } from "../../models/user.model";
 
 export class UpdateUserRepositoryMongoAdapter {
-  private _user = getModelForClass(User);
+  private _user = UserModel;
 
-  public async execute(data: UserEntity): Promise<UserEntity> {
+  public async execute(data: User): Promise<User> {
     const session = await mongoose.startSession();
     let updatedUser = null;
 
@@ -27,7 +26,7 @@ export class UpdateUserRepositoryMongoAdapter {
       await session.commitTransaction();
       session.endSession();
 
-      return new UserEntity(
+      return new User(
         updatedUser._id,
         updatedUser.name,
         updatedUser.email,
