@@ -1,10 +1,9 @@
 import * as app from "express";
-import { UserModel } from "./database/orm/mongoose/models/models";
 import * as dotenv from "dotenv";
 import { validateCheckZodVariables } from "./env.validation";
 import { logger } from "./logger";
 import { MongoBoostrap } from "./database/orm/mongoose";
-import { CreateUserRepositoryMongoAdapter } from "./database/orm/mongoose/repositories/users/create-user.repository";
+import { UserModel } from "./database/orm/mongoose/models/user.model";
 
 dotenv.config();
 
