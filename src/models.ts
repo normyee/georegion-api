@@ -9,7 +9,7 @@ import {
   Ref,
   modelOptions,
 } from "@typegoose/typegoose";
-import lib from "./lib";
+// import lib from "./lib";
 
 import ObjectId = mongoose.Types.ObjectId;
 
@@ -18,19 +18,19 @@ class Base extends TimeStamps {
   _id: string;
 }
 
-@pre<User>("save", async function (next) {
-  const user = this as Omit<any, keyof User> & User;
+// @pre<User>("save", async function (next) {
+//   const user = this as Omit<any, keyof User> & User;
 
-  if (user.isModified("coordinates")) {
-    user.address = await lib.getAddressFromCoordinates(user.coordinates);
-  } else if (user.isModified("address")) {
-    const { lat, lng } = await lib.getCoordinatesFromAddress(user.address);
+//   if (user.isModified("coordinates")) {
+//     user.address = await lib.getAddressFromCoordinates(user.coordinates);
+//   } else if (user.isModified("address")) {
+//     const { lat, lng } = await lib.getCoordinatesFromAddress(user.address);
 
-    user.coordinates = [lng, lat];
-  }
+//     user.coordinates = [lng, lat];
+//   }
 
-  next();
-})
+//   next();
+// })
 export class User extends Base {
   @Prop({ required: true })
   name!: string;
