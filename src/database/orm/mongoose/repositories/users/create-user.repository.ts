@@ -1,6 +1,6 @@
 import { getModelForClass } from "@typegoose/typegoose";
-import { User } from "../../../models";
-import { User as UserEntity } from "../../../entity/user.model";
+import { User } from "../../models/models";
+import { User as UserEntity } from "../../../../../entity/user.model";
 import mongoose from "mongoose";
 
 export class CreateUserRepositoryMongoAdapter {

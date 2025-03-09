@@ -1,7 +1,7 @@
 import { getModelForClass } from "@typegoose/typegoose";
-import { User } from "../../../models";
+import { User } from "../../models/models";
+import { User as UserEntity } from "../../../../../entity/user.model";
 import mongoose from "mongoose";
-import { User as UserEntity } from "../../../entity/user.model";
 
 export class UpdateUserRepositoryMongoAdapter {
   private _user = getModelForClass(User);
