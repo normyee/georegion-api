@@ -27,9 +27,12 @@ export class DeleteRegionRepositoryMongoAdapter
       await session.commitTransaction();
       session.endSession();
 
-      return new Region(deletedRegion._id, deletedRegion.name, id, [
-        deletedRegion.coordinates,
-      ]);
+      return new Region(
+        deletedRegion._id,
+        deletedRegion.name,
+        id,
+        deletedRegion.geometry
+      );
     } catch (error) {
       await session.abortTransaction();
       session.endSession();

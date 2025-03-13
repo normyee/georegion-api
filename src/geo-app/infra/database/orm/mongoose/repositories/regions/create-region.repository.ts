@@ -19,22 +19,23 @@ export class CreateRegionRepositoryMongoAdapter
 
     try {
       const [addedRegion] = await this._region.create(
-        [
-          {
-            name: data.name,
-            user: userId,
-            coordinates: data.coordinates,
-          },
-        ],
+        {
+          name: data.name,
+          user: data.userId,
+          geometry: data.geometry,
+        },
         { session }
       );
 
       await session.commitTransaction();
       session.endSession();
 
-      return new Region(addedRegion._id, addedRegion.name, userId, [
-        addedRegion.coordinates,
-      ]);
+      return new Region(
+        addedRegion._id,
+        addedRegion.name,
+        userId,
+        addedRegion.geometry
+      );
     } catch (error) {
       await session.abortTransaction();
       session.endSession();

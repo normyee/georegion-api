@@ -15,8 +15,6 @@ export class GetRegionRepositoryMongoAdapter implements IGetRegionRepository {
       throw new Error("region not found");
     }
 
-    return new Region(id, foundRegion.name, foundRegion.user.toString(), [
-      foundRegion.coordinates,
-    ]);
+    return new Region(id, foundRegion.name, foundRegion.user.toString(), foundRegion.geometry);
   }
 }

@@ -22,9 +22,7 @@ export class GetAllRegionsRepositoryMongoAdapter
 
     return regions.map(
       (region) =>
-        new Region(region._id, region.name, region.user.toString(), [
-          region.coordinates,
-        ])
+        new Region(region._id, region.name, region.user.toString(), region.geometry)
     );
   }
 }

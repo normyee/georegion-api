@@ -31,9 +31,7 @@ export class UpdateRegionRepositoryMongoAdapter
       await session.commitTransaction();
       session.endSession();
 
-      return new Region(id, updatedRegion.name, updatedRegion.user.toString(), [
-        updatedRegion.coordinates,
-      ]);
+      return new Region(id, updatedRegion.name, updatedRegion.user.toString(), updatedRegion.geometry);
     } catch (error) {
       await session.abortTransaction();
       session.endSession();
