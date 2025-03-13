@@ -2,21 +2,18 @@ export class Region {
   private _id: string;
   private _name: string;
   private _userId: string;
-  private _coordinates: { type: string; coordinates: number[][][] };
+  private _geometry: { type: string; coordinates: number[][][] };
 
   constructor(
     id: string,
     name: string,
     userId: string,
-    coordinates: number[][][]
+    geometry: { type: string; coordinates: number[][][] } 
   ) {
     this._id = id;
     this._name = name;
     this._userId = userId;
-    this._coordinates = {
-      type: "Polygon",
-      coordinates: coordinates,
-    };
+    this._geometry = geometry; 
   }
 
   get id(): string {
@@ -42,14 +39,11 @@ export class Region {
     this._userId = value;
   }
 
-  get coordinates(): { type: string; coordinates: number[][][] } {
-    return this._coordinates;
+  get geometry(): { type: string; coordinates: number[][][] } {
+    return this._geometry;
   }
 
-  set coordinates(value: number[][][]) {
-    this._coordinates = {
-      type: "Polygon",
-      coordinates: value,
-    };
+  set geometry(value: { type: string; coordinates: number[][][] }) {
+    this._geometry = value;
   }
 }
