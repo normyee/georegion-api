@@ -33,6 +33,8 @@ import { UpdateRegionUseCase } from "./geo-app/application/use-case/region/updat
 import { UpdateRegionRepositoryMongoAdapter } from "./geo-app/infra/database/orm/mongoose/repositories/regions/update-region.repository";
 import { PointContainedInRegionUseCase } from "./geo-app/application/use-case/region/point-contained-in-region.use-case";
 import { PointContainedInRegionRepositoryMongoAdapter } from "./geo-app/infra/database/orm/mongoose/repositories/regions/point-contained-in-region.repository";
+import { GeospatialProximityRepositoryMongoAdapter } from "./geo-app/infra/database/orm/mongoose/repositories/regions/geospatial-proximity.repository";
+import { GeospatialProximityUseCase } from "./geo-app/application/use-case/region/geospatial-proximity.use-case";
 
 dotenv.config();
 
@@ -112,6 +114,10 @@ const pointContainedInRegionUsecase = new PointContainedInRegionUseCase(
   new PointContainedInRegionRepositoryMongoAdapter()
 );
 
+const geospatialProximityUsecase = new GeospatialProximityUseCase(
+  new GeospatialProximityRepositoryMongoAdapter()
+);
+
 Container.set(
   RegionController,
   new RegionController(
@@ -120,7 +126,8 @@ Container.set(
     getRegionUsecase,
     getAllRegionsUsecase,
     updateRegionUsecase,
-    pointContainedInRegionUsecase
+    pointContainedInRegionUsecase,
+    geospatialProximityUsecase
   )
 );
 
