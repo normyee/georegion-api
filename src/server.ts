@@ -31,6 +31,8 @@ import { GetAllRegionsUseCase } from "./geo-app/application/use-case/region/get-
 import { GetAllRegionsRepositoryMongoAdapter } from "./geo-app/infra/database/orm/mongoose/repositories/regions/get-all-regions.repository";
 import { UpdateRegionUseCase } from "./geo-app/application/use-case/region/update-region.use-case";
 import { UpdateRegionRepositoryMongoAdapter } from "./geo-app/infra/database/orm/mongoose/repositories/regions/update-region.repository";
+import { PointContainedInRegionUseCase } from "./geo-app/application/use-case/region/point-contained-in-region.use-case";
+import { PointContainedInRegionRepositoryMongoAdapter } from "./geo-app/infra/database/orm/mongoose/repositories/regions/point-contained-in-region.repository";
 
 dotenv.config();
 
@@ -106,6 +108,10 @@ const updateRegionUsecase = new UpdateRegionUseCase(
   new RegionMapper()
 );
 
+const pointContainedInRegionUsecase = new PointContainedInRegionUseCase(
+  new PointContainedInRegionRepositoryMongoAdapter()
+);
+
 Container.set(
   RegionController,
   new RegionController(
@@ -113,7 +119,8 @@ Container.set(
     deleteRegionUsecase,
     getRegionUsecase,
     getAllRegionsUsecase,
-    updateRegionUsecase
+    updateRegionUsecase,
+    pointContainedInRegionUsecase
   )
 );
 
@@ -125,7 +132,7 @@ const router = app.Router();
 server.use(app.json());
 
 useExpressServer(server, {
-  controllers: [UserController],
+  controllers: [UserController, RegionController],
 });
 
 server.use(router);
