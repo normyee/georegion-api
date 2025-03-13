@@ -15,6 +15,7 @@ import { GetAllRegionsUseCase } from "../../application/use-case/region/get-all-
 import { GetRegionUseCase } from "../../application/use-case/region/get-region.use-case";
 import { UpdateRegionUseCase } from "../../application/use-case/region/update-region.use-case";
 import { PointContainedInRegionUseCase } from "../../application/use-case/region/point-contained-in-region.use-case";
+import { GeospatialProximityUseCase } from "../../application/use-case/region/geospatial-proximity.use-case";
 
 @Controller("/regions")
 export class RegionController {
@@ -24,7 +25,8 @@ export class RegionController {
     private _getRegionUseCase: GetRegionUseCase,
     private _getAllRegionsUseCase: GetAllRegionsUseCase,
     private _updateRegionUseCase: UpdateRegionUseCase,
-    private _pointContainedInRegionUseCase: PointContainedInRegionUseCase
+    private _pointContainedInRegionUseCase: PointContainedInRegionUseCase,
+    private _geospatialProximityUseCase: GeospatialProximityUseCase
   ) {}
 
   @Post("/")
@@ -39,7 +41,27 @@ export class RegionController {
     @QueryParam("page") page: number,
     @QueryParam("limit") limit: number
   ) {
-    return await this._pointContainedInRegionUseCase.execute([lng, lat], page, limit);
+    return await this._pointContainedInRegionUseCase.execute(
+      [lng, lat],
+      page,
+      limit
+    );
+  }
+
+  @Get("/near")
+  async GeospatialProximity(
+    @QueryParam("lng") lng: number,
+    @QueryParam("lat") lat: number,
+    @QueryParam("km_distance") distanceInKilometers: number,
+    @QueryParam("page") page: number,
+    @QueryParam("limit") limit: number
+  ) {
+    return await this._geospatialProximityUseCase.execute(
+      [lng, lat],
+      distanceInKilometers,
+      page,
+      limit
+    );
   }
 
   @Get("/:id")
