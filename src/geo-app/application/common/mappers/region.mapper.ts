@@ -8,11 +8,11 @@ export class RegionMapper implements IMapper<Region, RegionDTO> {
       id: region.id || null,
       name: region.name,
       userId: region.userId,
-      coordinates: region.coordinates.coordinates,
+      geometry: region.geometry,
     };
   }
 
   toEntity(data: RegionDTO, id?: string): Region {
-    return new Region(id || null, data.name, data.userId, data.coordinates);
+    return new Region(id || null, data.name, data.userId, data.geometry);
   }
 }
