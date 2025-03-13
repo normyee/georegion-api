@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { getModelForClass, pre, Prop, Ref } from "@typegoose/typegoose";
+import { getModelForClass, modelOptions, pre, Prop, Ref } from "@typegoose/typegoose";
 import { Base } from "./common/base.model";
 import lib from "../../../../providers/geo/geo-lib.provider";
 import { Region } from "./region.model";
@@ -18,6 +18,9 @@ import { Region } from "./region.model";
   }
 
   next();
+})
+@modelOptions({
+  schemaOptions: { validateBeforeSave: false, versionKey: false },
 })
 export class User extends Base {
   @Prop({ required: true })

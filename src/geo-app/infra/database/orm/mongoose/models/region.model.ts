@@ -9,7 +9,9 @@ import {
 import { User } from "./user.model";
 import { Base } from "./common/base.model";
 
-@modelOptions({ schemaOptions: { validateBeforeSave: false } })
+@modelOptions({
+  schemaOptions: { validateBeforeSave: false, versionKey: false },
+})
 export class Region extends Base {
   @Prop({ required: true })
   name!: string;
