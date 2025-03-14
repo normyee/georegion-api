@@ -1,24 +1,24 @@
 import mongoose from "mongoose";
-import { logger } from "../../../providers/logger/logger";
-
-type MongoConnectionConfig = {
-  host: string;
-  port: string;
-  name: string;
-};
+import { Logger } from "../../../providers/logger";
+import {
+  LoggerInstance,
+  MongoConnectionConfig,
+} from "../../../../../shared/types";
 
 export class MongoBoostrap {
-  private _logger: any;
+  private _logger: LoggerInstance;
 
   private static instance: MongoBoostrap;
 
-  private constructor() {
+  private constructor(logger: LoggerInstance) {
     this._logger = logger;
   }
 
-  public static getInstance(): MongoBoostrap {
+  public static getInstance(
+    logger: LoggerInstance = new Logger().getLogger(),
+  ): MongoBoostrap {
     if (!this.instance) {
-      this.instance = new MongoBoostrap();
+      this.instance = new MongoBoostrap(logger);
     }
     return this.instance;
   }
