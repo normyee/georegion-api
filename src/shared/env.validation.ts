@@ -11,6 +11,7 @@ const zodEnvVariables = z.object({
   MONGO_PASSWORD: z.string({ required_error: EnvErrors.required }),
   MONGO_PORT: z.string({ required_error: EnvErrors.required }),
   MONGO_DB: z.string({ required_error: EnvErrors.required }),
+  SECRET: z.string({ required_error: EnvErrors.required }),
 });
 
 type EnvVariables = Record<string, string | number | boolean>;
