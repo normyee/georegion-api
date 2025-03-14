@@ -19,10 +19,10 @@ import { GetUserUseCase } from "../../application/use-case/user/get-user.use-cas
 import { UpdateUserUseCase } from "../../application/use-case/user/update-user.use-case";
 import {
   AuthMiddleware,
-  TenantRequest,
 } from "../middlewares/auth-validation.middleware";
 import { Response } from "express";
 import { InvalidUserLocationError } from "../../application/common/errors";
+import { LoggerInstance, TenantRequest } from "../../../shared/types";
 
 @Controller("/users")
 export class UserController {
@@ -31,7 +31,8 @@ export class UserController {
     private _deleteUserUseCase: DeleteUserUseCase,
     private _getUserUseCase: GetUserUseCase,
     private _getAllUsersUseCase: GetAllUsersUseCase,
-    private _updateUserUseCase: UpdateUserUseCase
+    private _updateUserUseCase: UpdateUserUseCase,
+    private _logger: LoggerInstance
   ) {}
 
   @Post("/")
@@ -52,6 +53,7 @@ export class UserController {
           message: error.message,
         });
       }
+      this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });
@@ -63,7 +65,7 @@ export class UserController {
   async getById(
     @Req() req: TenantRequest,
     @Res() res: Response,
-    @Param("id") id: string
+    @Param("id") id: string,
   ) {
     const tenantId = req.tenant.id;
 
@@ -83,6 +85,7 @@ export class UserController {
         data: userData,
       };
     } catch (error) {
+      this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });
@@ -93,7 +96,7 @@ export class UserController {
   async getAll(
     @Res() res: Response,
     @QueryParam("page") page: number,
-    @QueryParam("limit") limit: number
+    @QueryParam("limit") limit: number,
   ) {
     try {
       const userData = await this._getAllUsersUseCase.execute(page, limit);
@@ -104,6 +107,7 @@ export class UserController {
         data: userData,
       };
     } catch (error) {
+      this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });
@@ -115,7 +119,7 @@ export class UserController {
   async delete(
     @Req() req: TenantRequest,
     @Res() res: Response,
-    @Param("id") id: string
+    @Param("id") id: string,
   ) {
     if (req.tenant.id !== id) {
       return res.status(401).json({
@@ -140,6 +144,7 @@ export class UserController {
         data: userData,
       };
     } catch (error) {
+      this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });
@@ -152,7 +157,7 @@ export class UserController {
     @Req() req: TenantRequest,
     @Res() res: Response,
     @Param("id") id: string,
-    @Body() data: UserDTO
+    @Body() data: UserDTO,
   ) {
     const tenantId = req.tenant.id;
 
@@ -185,6 +190,7 @@ export class UserController {
           message: error.message,
         });
       }
+      this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });

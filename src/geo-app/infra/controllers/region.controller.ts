@@ -19,12 +19,10 @@ import { GetRegionUseCase } from "../../application/use-case/region/get-region.u
 import { UpdateRegionUseCase } from "../../application/use-case/region/update-region.use-case";
 import { PointContainedInRegionUseCase } from "../../application/use-case/region/point-contained-in-region.use-case";
 import { GeospatialProximityUseCase } from "../../application/use-case/region/geospatial-proximity.use-case";
-import {
-  AuthMiddleware,
-  TenantRequest,
-} from "../middlewares/auth-validation.middleware";
+import { AuthMiddleware } from "../middlewares/auth-validation.middleware";
 import { MissingItemError } from "../../application/common/errors";
 import { Response } from "express";
+import { LoggerInstance, TenantRequest } from "../../../shared/types";
 
 @Controller("/regions")
 @UseBefore(AuthMiddleware)
@@ -36,14 +34,15 @@ export class RegionController {
     private _getAllRegionsUseCase: GetAllRegionsUseCase,
     private _updateRegionUseCase: UpdateRegionUseCase,
     private _pointContainedInRegionUseCase: PointContainedInRegionUseCase,
-    private _geospatialProximityUseCase: GeospatialProximityUseCase
+    private _geospatialProximityUseCase: GeospatialProximityUseCase,
+    private _logger: LoggerInstance,
   ) {}
 
   @Post("/")
   async create(
     @Res() res: Response,
     @Body() data: RegionDTO,
-    @Req() req: TenantRequest
+    @Req() req: TenantRequest,
   ) {
     try {
       data.userId = req.tenant.id;
@@ -60,7 +59,7 @@ export class RegionController {
           .status(400)
           .json({ status: "failure", message: error.message });
       }
-
+      this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });
@@ -73,13 +72,13 @@ export class RegionController {
     @QueryParam("lng") lng: number,
     @QueryParam("lat") lat: number,
     @QueryParam("page") page: number,
-    @QueryParam("limit") limit: number
+    @QueryParam("limit") limit: number,
   ) {
     try {
       const regionData = await this._pointContainedInRegionUseCase.execute(
         [lng, lat],
         page,
-        limit
+        limit,
       );
 
       return {
@@ -88,6 +87,8 @@ export class RegionController {
         data: regionData,
       };
     } catch (error) {
+      this._logger.error("An unexpected error occurred", error);
+
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });
@@ -103,7 +104,7 @@ export class RegionController {
     @QueryParam("page") page: number,
     @QueryParam("limit") limit: number,
     @QueryParam("filter_user") filterUser: string,
-    @Req() req: TenantRequest
+    @Req() req: TenantRequest,
   ) {
     try {
       let userId = null;
@@ -117,7 +118,7 @@ export class RegionController {
         distanceInKilometers,
         userId,
         page,
-        limit
+        limit,
       );
 
       return {
@@ -126,6 +127,7 @@ export class RegionController {
         data: regionData,
       };
     } catch (error) {
+      this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });
@@ -150,6 +152,7 @@ export class RegionController {
         data: regionData,
       };
     } catch (error) {
+      this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });
@@ -160,7 +163,7 @@ export class RegionController {
   async getAll(
     @Res() res: Response,
     @QueryParam("page") page: number,
-    @QueryParam("limit") limit: number
+    @QueryParam("limit") limit: number,
   ) {
     try {
       const regionData = await this._getAllRegionsUseCase.execute(page, limit);
@@ -171,6 +174,7 @@ export class RegionController {
         data: regionData,
       };
     } catch (error) {
+      this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });
@@ -195,6 +199,7 @@ export class RegionController {
         data: regionData,
       };
     } catch (error) {
+      this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });
@@ -205,7 +210,7 @@ export class RegionController {
   async update(
     @Res() res: Response,
     @Param("id") id: string,
-    @Body() data: RegionDTO
+    @Body() data: RegionDTO,
   ) {
     try {
       const regionData = await this._updateRegionUseCase.execute(id, data);
@@ -223,6 +228,7 @@ export class RegionController {
         data: regionData,
       };
     } catch (error) {
+      this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
         .json({ status: "failure", message: "An unexpected error occurred" });
