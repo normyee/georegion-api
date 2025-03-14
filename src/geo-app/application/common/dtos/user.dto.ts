@@ -1,4 +1,4 @@
-import { GeoCoordinates } from "../../infra/providers/geo/geo-lib.provider";
+import { GeoCoordinates } from "../../../../shared/types";
 
 export type UserDTO = {
   id?: string;
