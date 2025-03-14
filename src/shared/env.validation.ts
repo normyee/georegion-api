@@ -1,5 +1,7 @@
 import { z, ZodError } from "zod";
-import { logger } from "../geo-app/infra/providers/logger/logger";
+import { Logger } from "../geo-app/infra/providers/logger";
+
+const logger = new Logger().getLogger();
 
 enum EnvErrors {
   required = "Env variable required",
@@ -18,7 +20,7 @@ type EnvVariables = Record<string, string | number | boolean>;
 export type ValidatedEnvVariables = z.output<typeof zodEnvVariables>;
 
 export const validateCheckZodVariables = (
-  config: EnvVariables
+  config: EnvVariables,
 ): ValidatedEnvVariables => {
   try {
     const envs = zodEnvVariables.parse(config);
@@ -29,13 +31,13 @@ export const validateCheckZodVariables = (
   } catch (error) {
     if (error instanceof ZodError) {
       const formattedErrors = error.errors.map(
-        (e) => `Env variable ${e.path[0]} error - ${e.message}`
+        (e) => `Env variable ${e.path[0]} error - ${e.message}`,
       );
 
       logger.error(`Validation check failed:\n${formattedErrors.join("\n")}`);
 
       throw new Error(
-        `Validation check failed:\n${formattedErrors.join("\n")}`
+        `Validation check failed:\n${formattedErrors.join("\n")}`,
       );
     } else {
       logger.error("Error occurred on env variables validation check");
