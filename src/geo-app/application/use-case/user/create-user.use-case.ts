@@ -1,17 +1,17 @@
 import { UserDTO } from "../../common/dtos/user.dto";
 import { InvalidUserLocationError } from "../../common/errors";
-import { IMapper } from "../../common/mappers/user.mapper";
 import { User } from "../../../domain/entity/user.entity";
-import { ICreateUserRepository } from "../../../infra/database/orm/mongoose/repositories/users/create-user.repository";
-import { IGeoLib } from "../../../infra/providers/geo/geo-lib.provider";
-import { IAuthProvider } from "../../../../shared/auth.provider";
+import { IMapper } from "../../../domain/common/mapper.interface";
+import { ICreateUserRepository } from "../../../domain/repositories/users/create-user.repository";
+import { IGeoLib } from "../../../abstractions/geo-lib.interface";
+import { IAuthProvider } from "../../../../shared/types";
 
 export class CreateUserUseCase {
   constructor(
     private readonly _createUserRepository: ICreateUserRepository,
     private readonly _geoLib: IGeoLib,
     private readonly _userMapper: IMapper<User, UserDTO>,
-    private readonly _authProvider: IAuthProvider
+    private readonly _authProvider: IAuthProvider,
   ) {}
   async execute(data: UserDTO) {
     if (data.address && data.coordinates) throw new InvalidUserLocationError();
@@ -20,7 +20,7 @@ export class CreateUserUseCase {
 
     if (data.address) {
       const coordinates = await this._geoLib.getCoordinatesFromAddress(
-        data.address
+        data.address,
       );
 
       userModel.coordinates = Array.isArray(coordinates)
@@ -30,9 +30,8 @@ export class CreateUserUseCase {
 
     if (data.coordinates) {
       userModel.address = await this._geoLib.getAddressFromCoordinates(
-        data.coordinates
+        data.coordinates,
       );
-
     }
 
     const user = await this._createUserRepository.execute(userModel);

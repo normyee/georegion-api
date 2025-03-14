@@ -1,4 +1,4 @@
-import { IGetAllUsersRepository } from "../../../infra/database/orm/mongoose/repositories/users/get-all-users.repository";
+import { IGetAllUsersRepository } from "../../../domain/repositories/users/get-all-users.repository";
 
 export class GetAllUsersUseCase {
   constructor(

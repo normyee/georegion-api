@@ -1,4 +1,4 @@
-import { IDeleteUserRepository } from "../../../infra/database/orm/mongoose/repositories/users/delete-user.repository";
+import { IDeleteUserRepository } from "../../../domain/repositories/users/delete-user.repository";
 
 export class DeleteUserUseCase {
   constructor(private readonly _deleteUserRepository: IDeleteUserRepository) {}
