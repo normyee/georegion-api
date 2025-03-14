@@ -4,12 +4,14 @@ import { IMapper } from "../../common/mappers/user.mapper";
 import { User } from "../../../domain/entity/user.entity";
 import { ICreateUserRepository } from "../../../infra/database/orm/mongoose/repositories/users/create-user.repository";
 import { IGeoLib } from "../../../infra/providers/geo/geo-lib.provider";
+import { IAuthProvider } from "../../../../shared/auth.provider";
 
 export class CreateUserUseCase {
   constructor(
     private readonly _createUserRepository: ICreateUserRepository,
     private readonly _geoLib: IGeoLib,
-    private readonly _userMapper: IMapper<User, UserDTO>
+    private readonly _userMapper: IMapper<User, UserDTO>,
+    private readonly _authProvider: IAuthProvider
   ) {}
   async execute(data: UserDTO) {
     if (data.address && data.coordinates) throw new InvalidUserLocationError();
@@ -21,19 +23,26 @@ export class CreateUserUseCase {
         data.address
       );
 
+      console.log(coordinates);
+
       userModel.coordinates = Array.isArray(coordinates)
         ? coordinates
         : [coordinates.lng, coordinates.lat];
     }
 
     if (data.coordinates) {
+      console.log(userModel.address);
       userModel.address = await this._geoLib.getAddressFromCoordinates(
         data.coordinates
       );
+
+      console.log(userModel.address);
     }
 
     const user = await this._createUserRepository.execute(userModel);
 
-    return this._userMapper.toDTO(user);
+    const token = this._authProvider.tokenize(user.id);
+
+    return { user: this._userMapper.toDTO(user), token };
   }
 }

@@ -2,17 +2,21 @@ import { User } from "../../../../../../domain/entity/user.entity";
 import { UserModel } from "../../models/user.model";
 
 export interface IGetUserRepository {
-  execute(id: string): Promise<User>;
+  execute(id: string, tenantId: string): Promise<User>;
 }
 
 export class GetUserRepositoryMongoAdapter implements IGetUserRepository {
   private _user = UserModel;
 
-  public async execute(id: string): Promise<User> {
+  public async execute(id: string, tenantId: string): Promise<User> {
     const foundUser = await this._user.findOne({ _id: id }).exec();
 
     if (!foundUser) {
-      throw new Error("User not found");
+      return null;
+    }
+
+    if (id !== tenantId) {
+      foundUser.email = "########";
     }
 
     return new User(

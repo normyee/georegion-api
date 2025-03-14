@@ -1,6 +1,7 @@
 import { User } from "../../../../../../domain/entity/user.entity";
 import mongoose from "mongoose";
 import { UserModel } from "../../models/user.model";
+import { RegionModel } from "../../models/region.model";
 
 export interface IDeleteUserRepository {
   execute(id: string): Promise<User>;
@@ -8,20 +9,24 @@ export interface IDeleteUserRepository {
 
 export class DeleteUserRepositoryMongoAdapter implements IDeleteUserRepository {
   private _user = UserModel;
+  private _region = RegionModel;
   public async execute(id: string): Promise<User> {
     const session = await mongoose.startSession();
-    let deletedUser = null;
 
     session.startTransaction();
 
     try {
-      deletedUser = await this._user
+      const deletedUser = await this._user
         .findOneAndDelete({ _id: id })
         .session(session);
 
       if (!deletedUser) {
-        throw new Error("User was not found");
+        await session.abortTransaction();
+        session.endSession();
+        return null;
       }
+
+      await this._region.deleteMany({ user: deletedUser._id }).session(session);
 
       await session.commitTransaction();
       session.endSession();

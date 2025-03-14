@@ -11,20 +11,30 @@ export class UpdateUserRepositoryMongoAdapter implements IUpdateUserRepository {
 
   public async execute(id: string, data: User): Promise<User> {
     const session = await mongoose.startSession();
-    let updatedUser = null;
 
     session.startTransaction();
 
     try {
-      updatedUser = await this._user
-        .findOneAndUpdate({ _id: id }, data, {
-          new: true,
-          session,
-        })
+      const updatedUser = await this._user
+        .findOneAndUpdate(
+          { _id: id },
+          {
+            name: data.name,
+            email: data.email,
+            address: data.address,
+            coordinates: data.coordinates,
+          },
+          {
+            new: true,
+            session,
+          }
+        )
         .exec();
 
       if (!updatedUser) {
-        throw new Error("User not found");
+        await session.abortTransaction();
+        session.endSession();
+        return null;
       }
 
       await session.commitTransaction();

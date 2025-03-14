@@ -22,7 +22,7 @@ export class GetAllUsersRepositoryMongoAdapter
         new User(
           user._id,
           user.name,
-          user.email,
+          "#############",
           user.address,
           user.coordinates
         )

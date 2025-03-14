@@ -14,12 +14,6 @@ export class User {
   ) {
     this._address = address;
     this._coordinates = coordinates;
-    this.validate();
-  }
-
-  private validate() {
-    if (!this.name) throw new Error("name is required");
-    if (!this.email) throw new Error("email is required");
   }
 
   get address(): string | undefined {
