@@ -1,15 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { ExpressMiddlewareInterface } from "routing-controllers";
-import { AuthProvider } from "../../../shared/auth.provider";
-
-const authProvider = new AuthProvider();
-
-export interface TenantRequest extends Request {
-  tenant?: { id: string };
-}
+import { IAuthProvider, TenantRequest } from "../../../shared/types";
 
 export class AuthMiddleware implements ExpressMiddlewareInterface {
-  use(req: TenantRequest, res: Response, next: NextFunction): any {
+  constructor(private readonly _authProvider: IAuthProvider) {}
+  use(req: TenantRequest, res: Response, next: NextFunction): Response | void {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
@@ -19,7 +14,7 @@ export class AuthMiddleware implements ExpressMiddlewareInterface {
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = authProvider.validate(token);
+    const decoded = this._authProvider.validate(token);
 
     if (!decoded) {
       return res
