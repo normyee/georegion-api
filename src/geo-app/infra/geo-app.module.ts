@@ -35,6 +35,8 @@ import { AuthMiddleware } from "./middlewares/auth-validation.middleware";
 
 import { Express } from "express";
 import { Logger } from "./providers/logger";
+import { LoginUserUseCase } from "../application/use-case/user/login-user.use-case";
+import { GetUserByEmailRepositoryMongoAdapter } from "./database/orm/mongoose/repositories/users/get-user-by-email.repository";
 
 const logger = new Logger().getLogger();
 
@@ -78,6 +80,11 @@ export class GeoAppModule {
       ),
     );
 
+    const loginUserUsecase = new LoginUserUseCase(
+      new GetUserByEmailRepositoryMongoAdapter(),
+      new AuthProvider(logger),
+    );
+
     this.container.set(
       UserController,
       new UserController(
@@ -87,6 +94,7 @@ export class GeoAppModule {
         getAllUsersUsecase,
         updateUserUsecase,
         logger,
+        loginUserUsecase,
       ),
     );
 
