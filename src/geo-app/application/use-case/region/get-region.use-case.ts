@@ -1,4 +1,4 @@
-import { IGetRegionRepository } from "../../../infra/database/orm/mongoose/repositories/regions/get-region.repository";
+import { IGetRegionRepository } from "../../../domain/repositories/regions/get-region.repository";
 
 export class GetRegionUseCase {
   constructor(private readonly _getRegionRepository: IGetRegionRepository) {}

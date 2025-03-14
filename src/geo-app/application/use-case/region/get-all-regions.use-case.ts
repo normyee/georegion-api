@@ -1,8 +1,8 @@
-import { IGetAllRegionsRepository } from "../../../infra/database/orm/mongoose/repositories/regions/get-all-regions.repository";
+import { IGetAllRegionsRepository } from "../../../domain/repositories/regions/get-all-regions.repositoy";
 
 export class GetAllRegionsUseCase {
   constructor(
-    private readonly _getAllRegionsRepository: IGetAllRegionsRepository
+    private readonly _getAllRegionsRepository: IGetAllRegionsRepository,
   ) {}
 
   async execute(page: number, limit: number) {

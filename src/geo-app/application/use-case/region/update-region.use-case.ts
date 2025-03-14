@@ -1,7 +1,7 @@
-import { IMapper } from "../../common/mappers/user.mapper";
 import { RegionDTO } from "../../common/dtos/region.dto";
-import { IUpdateRegionRepository } from "../../../infra/database/orm/mongoose/repositories/regions/update-region.repository";
 import { Region } from "../../../domain/entity/region.entity";
+import { IMapper } from "../../../domain/common/mapper.interface";
+import { IUpdateRegionRepository } from "../../../domain/repositories/regions/update-region.repository";
 
 export class UpdateRegionUseCase {
   constructor(

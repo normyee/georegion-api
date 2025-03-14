@@ -1,4 +1,5 @@
-import { IDeleteRegionRepository } from "../../../infra/database/orm/mongoose/repositories/regions/delete-region.repository";
+import { IDeleteRegionRepository } from "../../../domain/repositories/regions/delete-region.repository";
+
 
 export class DeleteRegionUseCase {
   constructor(
