@@ -1,8 +1,4 @@
-export interface IMapper<Entity, DTO> {
-  toDTO(entity: Entity): DTO;
-  toEntity(dto: DTO, id?: string): Entity;
-}
-
+import { IMapper } from "../../../domain/common/mapper.interface";
 import { User } from "../../../domain/entity/user.entity";
 import { UserDTO } from "../dtos/user.dto";
 
