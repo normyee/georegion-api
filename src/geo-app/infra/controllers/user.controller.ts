@@ -17,12 +17,11 @@ import { DeleteUserUseCase } from "../../application/use-case/user/delete-user-u
 import { GetAllUsersUseCase } from "../../application/use-case/user/get-all-users.use-case";
 import { GetUserUseCase } from "../../application/use-case/user/get-user.use-case";
 import { UpdateUserUseCase } from "../../application/use-case/user/update-user.use-case";
-import {
-  AuthMiddleware,
-} from "../middlewares/auth-validation.middleware";
+import { AuthMiddleware } from "../middlewares/auth-validation.middleware";
 import { Response } from "express";
 import { InvalidUserLocationError } from "../../application/common/errors";
 import { LoggerInstance, TenantRequest } from "../../../shared/types";
+import { LoginUserUseCase } from "../../application/use-case/user/login-user.use-case";
 
 @Controller("/users")
 export class UserController {
@@ -32,7 +31,8 @@ export class UserController {
     private _getUserUseCase: GetUserUseCase,
     private _getAllUsersUseCase: GetAllUsersUseCase,
     private _updateUserUseCase: UpdateUserUseCase,
-    private _logger: LoggerInstance
+    private _logger: LoggerInstance,
+    private _loginUserUseCase: LoginUserUseCase,
   ) {}
 
   @Post("/")
@@ -53,6 +53,31 @@ export class UserController {
           message: error.message,
         });
       }
+      this._logger.error("An unexpected error occurred", error);
+      return res
+        .status(500)
+        .json({ status: "failure", message: "An unexpected error occurred" });
+    }
+  }
+
+  @Post("/login")
+  async getByEmail(@Res() res: Response, @Body() { email }: { email: string }) {
+    try {
+      const token = await this._loginUserUseCase.execute(email);
+
+      if (!token) {
+        return res.status(404).json({
+          status: "failure",
+          message: "User's email not found",
+        });
+      }
+
+      return {
+        status: "success",
+        message: "User has signed in successfully",
+        token,
+      };
+    } catch (error) {
       this._logger.error("An unexpected error occurred", error);
       return res
         .status(500)
