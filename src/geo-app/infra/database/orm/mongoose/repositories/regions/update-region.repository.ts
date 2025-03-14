@@ -1,10 +1,7 @@
 import mongoose from "mongoose";
 import { RegionModel } from "../../models/region.model";
 import { Region } from "../../../../../../domain/entity/region.entity";
-
-export interface IUpdateRegionRepository {
-  execute(id: string, data: Region): Promise<Region>;
-}
+import { IUpdateRegionRepository } from "../../../../../../domain/repositories/regions/update-region.repository";
 
 export class UpdateRegionRepositoryMongoAdapter
   implements IUpdateRegionRepository
@@ -24,7 +21,7 @@ export class UpdateRegionRepositoryMongoAdapter
           {
             new: true,
             session,
-          }
+          },
         )
         .exec();
 
@@ -41,7 +38,7 @@ export class UpdateRegionRepositoryMongoAdapter
         id,
         updatedRegion.name,
         updatedRegion.user.toString(),
-        updatedRegion.geometry
+        updatedRegion.geometry,
       );
     } catch (error) {
       await session.abortTransaction();

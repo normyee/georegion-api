@@ -1,10 +1,7 @@
 import { User } from "../../../../../../domain/entity/user.entity";
 import mongoose from "mongoose";
 import { UserModel } from "../../models/user.model";
-
-export interface IUpdateUserRepository {
-  execute(id: string, data: User): Promise<User>;
-}
+import { IUpdateUserRepository } from "../../../../../../domain/repositories/users/update-user.repository";
 
 export class UpdateUserRepositoryMongoAdapter implements IUpdateUserRepository {
   private _user = UserModel;

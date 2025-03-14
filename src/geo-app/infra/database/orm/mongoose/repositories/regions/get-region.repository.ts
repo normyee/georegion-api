@@ -1,9 +1,6 @@
 import { Region } from "../../../../../../domain/entity/region.entity";
+import { IGetRegionRepository } from "../../../../../../domain/repositories/regions/get-region.repository";
 import { RegionModel } from "../../models/region.model";
-
-export interface IGetRegionRepository {
-  execute(id: string): Promise<Region>;
-}
 
 export class GetRegionRepositoryMongoAdapter implements IGetRegionRepository {
   private _region = RegionModel;
@@ -19,7 +16,7 @@ export class GetRegionRepositoryMongoAdapter implements IGetRegionRepository {
       id,
       foundRegion.name,
       foundRegion.user.toString(),
-      foundRegion.geometry
+      foundRegion.geometry,
     );
   }
 }

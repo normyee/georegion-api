@@ -1,10 +1,7 @@
 import { User } from "../../../../../../domain/entity/user.entity";
 import mongoose from "mongoose";
 import { UserModel } from "../../models/user.model";
-
-export interface ICreateUserRepository {
-  execute(data: User): Promise<User>;
-}
+import { ICreateUserRepository } from "../../../../../../domain/repositories/users/create-user.repository";
 
 export class CreateUserRepositoryMongoAdapter implements ICreateUserRepository {
   private _user = UserModel;

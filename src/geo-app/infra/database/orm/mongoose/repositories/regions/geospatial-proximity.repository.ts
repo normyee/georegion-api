@@ -1,16 +1,7 @@
 import { FilterQuery } from "mongoose";
 import { Region } from "../../../../../../domain/entity/region.entity";
 import { RegionModel } from "../../models/region.model";
-
-export interface IGeospatialProximityRepository {
-  execute(
-    geoPoint: number[],
-    distanceInKilometers: number,
-    userId: string | null,
-    page: number,
-    limit: number
-  ): Promise<Region[]>;
-}
+import { IGeospatialProximityRepository } from "../../../../../../domain/repositories/regions/geospatial-proximity.repository";
 
 export class GeospatialProximityRepositoryMongoAdapter
   implements IGeospatialProximityRepository
@@ -22,7 +13,7 @@ export class GeospatialProximityRepositoryMongoAdapter
     distanceInKilometers: number,
     userId: string | null,
     page: number,
-    limit: number
+    limit: number,
   ): Promise<Region[]> {
     const distanceInMeters = distanceInKilometers * 1000;
 
@@ -54,8 +45,8 @@ export class GeospatialProximityRepositoryMongoAdapter
           region._id,
           region.name,
           region.user.toString(),
-          region.geometry
-        )
+          region.geometry,
+        ),
     );
   }
 }

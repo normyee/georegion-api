@@ -2,10 +2,7 @@ import mongoose from "mongoose";
 import { RegionModel } from "../../models/region.model";
 import { Region } from "../../../../../../domain/entity/region.entity";
 import { UserModel } from "../../models/user.model";
-
-export interface IDeleteRegionRepository {
-  execute(id: string): Promise<Region>;
-}
+import { IDeleteRegionRepository } from "../../../../../../domain/repositories/regions/delete-region.repository";
 
 export class DeleteRegionRepositoryMongoAdapter
   implements IDeleteRegionRepository
@@ -40,7 +37,7 @@ export class DeleteRegionRepositoryMongoAdapter
         deletedRegion._id,
         deletedRegion.name,
         id,
-        deletedRegion.geometry
+        deletedRegion.geometry,
       );
     } catch (error) {
       await session.abortTransaction();

@@ -2,10 +2,7 @@ import { User } from "../../../../../../domain/entity/user.entity";
 import mongoose from "mongoose";
 import { UserModel } from "../../models/user.model";
 import { RegionModel } from "../../models/region.model";
-
-export interface IDeleteUserRepository {
-  execute(id: string): Promise<User>;
-}
+import { IDeleteUserRepository } from "../../../../../../domain/repositories/users/delete-user.repository";
 
 export class DeleteUserRepositoryMongoAdapter implements IDeleteUserRepository {
   private _user = UserModel;

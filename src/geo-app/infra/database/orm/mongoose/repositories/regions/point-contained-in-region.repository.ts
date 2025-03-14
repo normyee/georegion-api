@@ -1,9 +1,6 @@
 import { Region } from "../../../../../../domain/entity/region.entity";
+import { IPointContainedInRegionRepository } from "../../../../../../domain/repositories/regions/point-contained-in-region.repository";
 import { RegionModel } from "../../models/region.model";
-
-export interface IPointContainedInRegionRepository {
-  execute(geoPoint: number[], page: number, limit: number): Promise<Region[]>;
-}
 
 export class PointContainedInRegionRepositoryMongoAdapter
   implements IPointContainedInRegionRepository
@@ -12,7 +9,7 @@ export class PointContainedInRegionRepositoryMongoAdapter
   async execute(
     geoPoint: number[],
     page: number,
-    limit: number
+    limit: number,
   ): Promise<Region[]> {
     const regions = await this._region
       .find({
@@ -35,8 +32,8 @@ export class PointContainedInRegionRepositoryMongoAdapter
           region._id,
           region.name,
           region.user.toString(),
-          region.geometry
-        )
+          region.geometry,
+        ),
     );
   }
 }

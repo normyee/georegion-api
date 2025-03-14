@@ -1,9 +1,6 @@
 import { User } from "../../../../../../domain/entity/user.entity";
+import { IGetAllUsersRepository } from "../../../../../../domain/repositories/users/get-all-users.repository";
 import { UserModel } from "../../models/user.model";
-
-export interface IGetAllUsersRepository {
-  execute(page: number, limit: number): Promise<User[]>;
-}
 
 export class GetAllUsersRepositoryMongoAdapter
   implements IGetAllUsersRepository

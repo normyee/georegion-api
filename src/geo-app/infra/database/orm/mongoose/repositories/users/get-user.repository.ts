@@ -1,9 +1,6 @@
 import { User } from "../../../../../../domain/entity/user.entity";
+import { IGetUserRepository } from "../../../../../../domain/repositories/users/get-user.repository";
 import { UserModel } from "../../models/user.model";
-
-export interface IGetUserRepository {
-  execute(id: string, tenantId: string): Promise<User>;
-}
 
 export class GetUserRepositoryMongoAdapter implements IGetUserRepository {
   private _user = UserModel;

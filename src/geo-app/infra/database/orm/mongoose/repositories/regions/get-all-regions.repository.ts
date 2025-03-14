@@ -1,9 +1,6 @@
 import { Region } from "../../../../../../domain/entity/region.entity";
+import { IGetAllRegionsRepository } from "../../../../../../domain/repositories/regions/get-all-regions.repositoy";
 import { RegionModel } from "../../models/region.model";
-
-export interface IGetAllRegionsRepository {
-  execute(page: number, limit: number): Promise<Region[]>;
-}
 
 export class GetAllRegionsRepositoryMongoAdapter
   implements IGetAllRegionsRepository
@@ -12,7 +9,7 @@ export class GetAllRegionsRepositoryMongoAdapter
 
   public async execute(
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<Region[]> {
     const regions = await this._region
       .find()
@@ -22,7 +19,12 @@ export class GetAllRegionsRepositoryMongoAdapter
 
     return regions.map(
       (region) =>
-        new Region(region._id, region.name, region.user.toString(), region.geometry)
+        new Region(
+          region._id,
+          region.name,
+          region.user.toString(),
+          region.geometry,
+        ),
     );
   }
 }

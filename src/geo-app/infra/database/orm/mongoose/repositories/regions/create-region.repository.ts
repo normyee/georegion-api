@@ -1,11 +1,8 @@
 import mongoose from "mongoose";
 import { RegionModel } from "../../models/region.model";
-import { Region } from "../../../../../../domain/entity/region.entity";
 import { UserModel } from "../../models/user.model";
-
-export interface ICreateRegionRepository {
-  execute(data: Region): Promise<Region>;
-}
+import { ICreateRegionRepository } from "../../../../../../domain/repositories/regions/create-region.repository";
+import { Region } from "../../../../../../domain/entity/region.entity";
 
 export class CreateRegionRepositoryMongoAdapter
   implements ICreateRegionRepository
@@ -28,14 +25,14 @@ export class CreateRegionRepositoryMongoAdapter
             geometry: data.geometry,
           },
         ],
-        { session }
+        { session },
       );
 
       if (userId) {
         await this._user.updateOne(
           { _id: userId },
           { $push: { regions: addedRegion._id } },
-          { session }
+          { session },
         );
       }
 
@@ -46,7 +43,7 @@ export class CreateRegionRepositoryMongoAdapter
         addedRegion._id,
         addedRegion.name,
         userId,
-        addedRegion.geometry
+        addedRegion.geometry,
       );
     } catch (error) {
       await session.abortTransaction();
