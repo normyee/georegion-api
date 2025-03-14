@@ -2,7 +2,7 @@ import { useContainer, useExpressServer } from "routing-controllers";
 import Container from "typedi";
 import { CreateUserUseCase } from "../application/use-case/user/create-user.use-case";
 import { CreateUserRepositoryMongoAdapter } from "./database/orm/mongoose/repositories/users/create-user.repository";
-import { GeoLibOpenStreetMapAdapter } from "./providers/geo/geo-lib.provider";
+import { GeoLibOpenStreetMapAdapter } from "./providers/geo";
 import { NetworkAxiosAdapter } from "../../shared/network.provider";
 import { UserMapper } from "../application/common/mappers/user.mapper";
 import { AuthProvider } from "../../shared/auth.provider";
@@ -31,10 +31,12 @@ import { PointContainedInRegionUseCase } from "../application/use-case/region/po
 import { PointContainedInRegionRepositoryMongoAdapter } from "./database/orm/mongoose/repositories/regions/point-contained-in-region.repository";
 import { GeospatialProximityRepositoryMongoAdapter } from "./database/orm/mongoose/repositories/regions/geospatial-proximity.repository";
 import { RegionController } from "./controllers/region.controller";
-import { logger } from "./providers/logger/logger";
 import { AuthMiddleware } from "./middlewares/auth-validation.middleware";
 
 import { Express } from "express";
+import { Logger } from "./providers/logger";
+
+const logger = new Logger().getLogger();
 
 export class GeoAppModule {
   private container = Container;
@@ -49,22 +51,22 @@ export class GeoAppModule {
       new CreateUserRepositoryMongoAdapter(),
       new GeoLibOpenStreetMapAdapter(
         new NetworkAxiosAdapter("https://nominatim.openstreetmap.org"),
-        logger
+        logger,
       ),
       new UserMapper(),
-      new AuthProvider()
+      new AuthProvider(logger),
     );
 
     const deleteUserUsecase = new DeleteUserUseCase(
-      new DeleteUserRepositoryMongoAdapter()
+      new DeleteUserRepositoryMongoAdapter(),
     );
 
     const getUserUsecase = new GetUserUseCase(
-      new GetUserRepositoryMongoAdapter()
+      new GetUserRepositoryMongoAdapter(),
     );
 
     const getAllUsersUsecase = new GetAllUsersUseCase(
-      new GetAllUsersRepositoryMongoAdapter()
+      new GetAllUsersRepositoryMongoAdapter(),
     );
 
     const updateUserUsecase = new UpdateUserUseCase(
@@ -72,8 +74,8 @@ export class GeoAppModule {
       new UserMapper(),
       new GeoLibOpenStreetMapAdapter(
         new NetworkAxiosAdapter("https://nominatim.openstreetmap.org"),
-        logger
-      )
+        logger,
+      ),
     );
 
     this.container.set(
@@ -83,38 +85,39 @@ export class GeoAppModule {
         deleteUserUsecase,
         getUserUsecase,
         getAllUsersUsecase,
-        updateUserUsecase
-      )
+        updateUserUsecase,
+        logger,
+      ),
     );
 
     const createRegionUsecase = new CreateRegionUseCase(
       new CreateRegionRepositoryMongoAdapter(),
-      new RegionMapper()
+      new RegionMapper(),
     );
 
     const deleteRegionUsecase = new DeleteRegionUseCase(
-      new DeleteRegionRepositoryMongoAdapter()
+      new DeleteRegionRepositoryMongoAdapter(),
     );
 
     const getRegionUsecase = new GetRegionUseCase(
-      new GetRegionRepositoryMongoAdapter()
+      new GetRegionRepositoryMongoAdapter(),
     );
 
     const getAllRegionsUsecase = new GetAllRegionsUseCase(
-      new GetAllRegionsRepositoryMongoAdapter()
+      new GetAllRegionsRepositoryMongoAdapter(),
     );
 
     const updateRegionUsecase = new UpdateRegionUseCase(
       new UpdateRegionRepositoryMongoAdapter(),
-      new RegionMapper()
+      new RegionMapper(),
     );
 
     const pointContainedInRegionUsecase = new PointContainedInRegionUseCase(
-      new PointContainedInRegionRepositoryMongoAdapter()
+      new PointContainedInRegionRepositoryMongoAdapter(),
     );
 
     const geospatialProximityUsecase = new GeospatialProximityUseCase(
-      new GeospatialProximityRepositoryMongoAdapter()
+      new GeospatialProximityRepositoryMongoAdapter(),
     );
 
     this.container.set(
@@ -126,13 +129,17 @@ export class GeoAppModule {
         getAllRegionsUsecase,
         updateRegionUsecase,
         pointContainedInRegionUsecase,
-        geospatialProximityUsecase
-      )
+        geospatialProximityUsecase,
+        logger,
+      ),
     );
 
-    this.container.set(AuthMiddleware, new AuthMiddleware());
+    this.container.set(
+      AuthMiddleware,
+      new AuthMiddleware(new AuthProvider(logger)),
+    );
 
-    useContainer(this.container)
+    useContainer(this.container);
   }
 
   public configureServer() {
