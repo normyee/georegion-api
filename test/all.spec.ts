@@ -1,98 +1,110 @@
-import "reflect-metadata";
-
-import * as mongoose from "mongoose";
-import * as supertest from "supertest";
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+import { expect } from "chai";
 import * as sinon from "sinon";
 import { faker } from "@faker-js/faker";
-import { expect, assert } from "chai";
+import { LoginUserUseCase } from "../src/geo-app/application/use-case/user/login-user.use-case";
+import { User } from "../src/geo-app/domain/entity/user.entity";
+import { GetUserUseCase } from "../src/geo-app/application/use-case/user/get-user.use-case";
 
-import "./database";
-import { Region, RegionModel, UserModel } from "./models";
-import GeoLib from "../src/geo-app/infra/providers/geo";
-import server from "../src/server";
-
-describe("Models", () => {
-  let user;
-  let session;
-  let geoLibStub: Partial<typeof GeoLib> = {};
-
-  before(async () => {
-    geoLibStub.getAddressFromCoordinates = sinon
-      .stub(GeoLib, "getAddressFromCoordinates")
-      .resolves(faker.location.streetAddress({ useFullAddress: true }));
-    geoLibStub.getCoordinatesFromAddress = sinon
-      .stub(GeoLib, "getCoordinatesFromAddress")
-      .resolves({
-        lat: faker.location.latitude(),
-        lng: faker.location.longitude(),
-      });
-
-    session = await mongoose.startSession();
-    user = await UserModel.create({
-      name: faker.person.firstName(),
-      email: faker.internet.email(),
-      address: faker.location.streetAddress({ useFullAddress: true }),
-    });
-  });
-
-  after(() => {
-    sinon.restore();
-    session.endSession();
-  });
+describe("LoginUserUseCase", () => {
+  let loginUserUseCase;
+  let getUserByEmailRepositoryStub;
+  let authProviderStub;
 
   beforeEach(() => {
-    session.startTransaction();
+    getUserByEmailRepositoryStub = {
+      execute: sinon.stub(),
+    };
+
+    authProviderStub = {
+      tokenize: sinon.stub(),
+    };
+
+    loginUserUseCase = new LoginUserUseCase(
+      getUserByEmailRepositoryStub,
+      authProviderStub,
+    );
   });
 
   afterEach(() => {
-    session.commitTransaction();
+    sinon.restore();
   });
 
-  describe("UserModel", () => {
-    it("should create a user", async () => {
-      expect(1).to.be.eq(1);
-    });
+  it("should return a token after email match", async () => {
+    const user = new User(
+      faker.string.uuid(),
+      faker.person.fullName(),
+      faker.internet.email(),
+    );
+    const fakeToken = faker.string.uuid();
+
+    getUserByEmailRepositoryStub.execute.resolves(user);
+    authProviderStub.tokenize.returns(fakeToken);
+
+    const result = await loginUserUseCase.execute(user.email);
+
+    expect(getUserByEmailRepositoryStub.execute.calledWith(user.email)).to.be
+      .true;
+    expect(authProviderStub.tokenize.calledWith(user.id)).to.be.true;
+    expect(result).to.equal(fakeToken);
   });
 
-  describe("RegionModel", () => {
-    it("should create a region", async () => {
-      const regionData: Omit<Region, "_id"> = {
-        user: user._id,
-        name: faker.person.fullName(),
-      };
+  it("should return null after email doesn't match", async () => {
+    getUserByEmailRepositoryStub.execute.resolves(null);
 
-      const [region] = await RegionModel.create([regionData]);
+    const result = await loginUserUseCase.execute(faker.internet.email());
 
-      expect(region).to.deep.include(regionData);
-    });
+    expect(getUserByEmailRepositoryStub.execute.called).to.be.true;
+    expect(authProviderStub.tokenize.called).to.be.false;
+    expect(result).to.be.null;
+  });
+});
 
-    it("should rollback changes in case of failure", async () => {
-      const userRecord = await UserModel.findOne({ _id: user._id })
-        .select("regions")
-        .lean();
-      try {
-        await RegionModel.create([{ user: user._id }]);
+describe("GetUserUseCase", () => {
+  let getUserUseCase;
+  let getUserRepositoryStub;
 
-        assert.fail("Should have thrown an error");
-      } catch (error) {
-        const updatedUserRecord = await UserModel.findOne({ _id: user._id })
-          .select("regions")
-          .lean();
+  beforeEach(() => {
+    getUserRepositoryStub = {
+      execute: sinon.stub(),
+    };
 
-        expect(userRecord).to.deep.eq(updatedUserRecord);
-      }
-    });
+    getUserUseCase = new GetUserUseCase(getUserRepositoryStub);
   });
 
-  it("should return a list of users", async () => {
-    const response = supertest(server).get(`/user`);
-
-    expect(response).to.have.property("status", 200);
+  afterEach(() => {
+    sinon.restore();
   });
 
-  it("should return a user", async () => {
-    const response = await supertest(server).get(`/users/${user._id}`);
+  it("should return a user when found", async () => {
+    const userId = faker.string.uuid();
+    const tenantId = faker.string.uuid();
+    const expectedUser = new User(
+      userId,
+      faker.person.fullName(),
+      faker.internet.email(),
+    );
 
-    expect(response).to.have.property("status", 200);
+    getUserRepositoryStub.execute.resolves(expectedUser);
+
+    const result = await getUserUseCase.execute(userId, tenantId);
+
+    expect(getUserRepositoryStub.execute.calledWith(userId, tenantId)).to.be
+      .true;
+
+    expect(result).to.equal(expectedUser);
+  });
+
+  it("should return null when user is not found", async () => {
+    const userId = faker.string.uuid();
+    const tenantId = faker.string.uuid();
+    getUserRepositoryStub.execute.resolves(null);
+
+    const result = await getUserUseCase.execute(userId, tenantId);
+
+    expect(getUserRepositoryStub.execute.calledWith(userId, tenantId)).to.be
+      .true;
+
+    expect(result).to.be.null;
   });
 });
