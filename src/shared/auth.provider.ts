@@ -1,23 +1,23 @@
 import * as jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
+import { DecodedToken, IAuthProvider, LoggerInstance } from "./types";
 dotenv.config();
 
 const SECRET = process.env.SECRET;
 
-export interface IAuthProvider {
-  tokenize(userId: string): string;
-  validate(token: string): any | null;
-}
-
 export class AuthProvider implements IAuthProvider {
+  constructor(private readonly _logger: LoggerInstance) {
+  }
+
   tokenize(userId: string): string {
     return jwt.sign({ userId }, SECRET, { expiresIn: "5h" });
   }
 
-  validate(token: string): any | null {
+  validate(token: string): DecodedToken | null {
     try {
-      return jwt.verify(token, SECRET);
-    } catch (err) {
+      return jwt.verify(token, SECRET) as DecodedToken;
+    } catch (error) {
+      this._logger.warn("Input token not valid", error);
       return null;
     }
   }
