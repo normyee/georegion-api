@@ -1,18 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-
-export interface RequestConfig {
-  headers?: Record<string, string>;
-  params?: Record<string, string | number>;
-  data?: unknown;
-}
-
-export interface INetwork {
-  get<T>(url: string, config?: RequestConfig): Promise<T>;
-  delete<T>(url: string, config?: RequestConfig): Promise<T>;
-  post<T>(url: string, data?: unknown, config?: RequestConfig): Promise<T>;
-  put<T>(url: string, data?: unknown, config?: RequestConfig): Promise<T>;
-  patch<T>(url: string, data?: unknown, config?: RequestConfig): Promise<T>;
-}
+import { INetwork, RequestConfig } from "./types";
 
 export class NetworkAxiosAdapter implements INetwork {
   private api: AxiosInstance;
