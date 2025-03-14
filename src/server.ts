@@ -2,8 +2,10 @@ import * as app from "express";
 import * as dotenv from "dotenv";
 import { validateCheckZodVariables } from "./shared/env.validation";
 import { MongoBoostrap } from "./geo-app/infra/database/orm/mongoose";
-import { logger } from "./geo-app/infra/providers/logger/logger";
 import { GeoAppModule } from "./geo-app/infra/geo-app.module";
+import { Logger } from "./geo-app/infra/providers/logger";
+
+const logger = new Logger().getLogger();
 
 dotenv.config();
 
