@@ -35,6 +35,8 @@ import { PointContainedInRegionUseCase } from "./geo-app/application/use-case/re
 import { PointContainedInRegionRepositoryMongoAdapter } from "./geo-app/infra/database/orm/mongoose/repositories/regions/point-contained-in-region.repository";
 import { GeospatialProximityRepositoryMongoAdapter } from "./geo-app/infra/database/orm/mongoose/repositories/regions/geospatial-proximity.repository";
 import { GeospatialProximityUseCase } from "./geo-app/application/use-case/region/geospatial-proximity.use-case";
+import { AuthProvider } from "./shared/auth.provider";
+import { AuthMiddleware } from "./geo-app/infra/middlewares/auth-validation.middleware";
 
 dotenv.config();
 
@@ -44,6 +46,7 @@ const config = {
   MONGO_PASSWORD: process.env.MONGO_PASSWORD,
   MONGO_PORT: process.env.MONGO_PORT,
   MONGO_DB: process.env.MONGO_DB,
+  SECRET: process.env.SECRET,
 };
 validateCheckZodVariables(config);
 
@@ -55,7 +58,8 @@ const createUserUsecase = new CreateUserUseCase(
     new NetworkAxiosAdapter("https://nominatim.openstreetmap.org"),
     logger
   ),
-  new UserMapper()
+  new UserMapper(),
+  new AuthProvider()
 );
 
 const deleteUserUsecase = new DeleteUserUseCase(
@@ -130,6 +134,8 @@ Container.set(
     geospatialProximityUsecase
   )
 );
+
+Container.set(AuthMiddleware, new AuthMiddleware());
 
 useContainer(Container);
 
