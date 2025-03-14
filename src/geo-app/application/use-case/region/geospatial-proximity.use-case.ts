@@ -8,12 +8,14 @@ export class GeospatialProximityUseCase {
   async execute(
     geoPoint: number[],
     distanceInKilometers: number,
+    userId: string,
     page: number,
     limit: number
   ) {
     return await this._geospatialProximityRepository.execute(
       geoPoint,
       distanceInKilometers,
+      userId,
       page,
       limit
     );

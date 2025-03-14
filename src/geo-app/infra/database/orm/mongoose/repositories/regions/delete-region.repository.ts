@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { RegionModel } from "../../models/region.model";
 import { Region } from "../../../../../../domain/entity/region.entity";
+import { UserModel } from "../../models/user.model";
 
 export interface IDeleteRegionRepository {
   execute(id: string): Promise<Region>;
@@ -10,6 +11,8 @@ export class DeleteRegionRepositoryMongoAdapter
   implements IDeleteRegionRepository
 {
   private _region = RegionModel;
+  private _user = UserModel;
+
   public async execute(id: string): Promise<Region> {
     const session = await mongoose.startSession();
 
@@ -21,8 +24,14 @@ export class DeleteRegionRepositoryMongoAdapter
         .session(session);
 
       if (!deletedRegion) {
-        throw new Error("Region was not found");
+        await session.abortTransaction();
+        session.endSession();
+        return null;
       }
+
+      await this._user
+        .updateOne({ _id: deletedRegion.user }, { $pull: { regions: id } })
+        .session(session);
 
       await session.commitTransaction();
       session.endSession();

@@ -23,20 +23,16 @@ export class CreateUserUseCase {
         data.address
       );
 
-      console.log(coordinates);
-
       userModel.coordinates = Array.isArray(coordinates)
         ? coordinates
         : [coordinates.lng, coordinates.lat];
     }
 
     if (data.coordinates) {
-      console.log(userModel.address);
       userModel.address = await this._geoLib.getAddressFromCoordinates(
         data.coordinates
       );
 
-      console.log(userModel.address);
     }
 
     const user = await this._createUserRepository.execute(userModel);

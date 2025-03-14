@@ -18,20 +18,31 @@ export class UpdateRegionRepositoryMongoAdapter
 
     try {
       const updatedRegion = await this._region
-        .findOneAndUpdate({ _id: id }, data, {
-          new: true,
-          session,
-        })
+        .findOneAndUpdate(
+          { _id: id },
+          { name: data.name, geometry: data.geometry },
+          {
+            new: true,
+            session,
+          }
+        )
         .exec();
 
       if (!updatedRegion) {
-        throw new Error("Region not found");
+        await session.abortTransaction();
+        session.endSession();
+        return null;
       }
 
       await session.commitTransaction();
       session.endSession();
 
-      return new Region(id, updatedRegion.name, updatedRegion.user.toString(), updatedRegion.geometry);
+      return new Region(
+        id,
+        updatedRegion.name,
+        updatedRegion.user.toString(),
+        updatedRegion.geometry
+      );
     } catch (error) {
       await session.abortTransaction();
       session.endSession();

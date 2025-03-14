@@ -12,9 +12,14 @@ export class GetRegionRepositoryMongoAdapter implements IGetRegionRepository {
     const foundRegion = await this._region.findOne({ _id: id }).exec();
 
     if (!foundRegion) {
-      throw new Error("region not found");
+      return null;
     }
 
-    return new Region(id, foundRegion.name, foundRegion.user.toString(), foundRegion.geometry);
+    return new Region(
+      id,
+      foundRegion.name,
+      foundRegion.user.toString(),
+      foundRegion.geometry
+    );
   }
 }

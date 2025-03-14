@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { RegionModel } from "../../models/region.model";
 import { Region } from "../../../../../../domain/entity/region.entity";
+import { UserModel } from "../../models/user.model";
 
 export interface ICreateRegionRepository {
   execute(data: Region): Promise<Region>;
@@ -10,6 +11,7 @@ export class CreateRegionRepositoryMongoAdapter
   implements ICreateRegionRepository
 {
   private _region = RegionModel;
+  private _user = UserModel;
 
   public async execute(data: Region): Promise<Region> {
     const session = await mongoose.startSession();
@@ -28,6 +30,14 @@ export class CreateRegionRepositoryMongoAdapter
         ],
         { session }
       );
+
+      if (userId) {
+        await this._user.updateOne(
+          { _id: userId },
+          { $push: { regions: addedRegion._id } },
+          { session }
+        );
+      }
 
       await session.commitTransaction();
       session.endSession();
