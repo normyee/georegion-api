@@ -5,6 +5,7 @@ import { faker } from "@faker-js/faker";
 import { LoginUserUseCase } from "../src/geo-app/application/use-case/user/login-user.use-case";
 import { User } from "../src/geo-app/domain/entity/user.entity";
 import { GetUserUseCase } from "../src/geo-app/application/use-case/user/get-user.use-case";
+import { CreateUserUseCase } from "../src/geo-app/application/use-case/user/create-user.use-case";
 
 describe("LoginUserUseCase", () => {
   let loginUserUseCase;
@@ -106,5 +107,84 @@ describe("GetUserUseCase", () => {
       .true;
 
     expect(result).to.be.null;
+  });
+});
+
+describe("CreateUserUseCase", () => {
+  let createUserRepositoryStub,
+    geoLibStub,
+    userMapperStub,
+    authProviderStub,
+    createUserUseCase;
+
+  beforeEach(() => {
+    createUserRepositoryStub = { execute: sinon.stub() };
+    geoLibStub = {
+      getCoordinatesFromAddress: sinon.stub(),
+      getAddressFromCoordinates: sinon.stub(),
+    };
+    userMapperStub = {
+      toEntity: sinon.stub(),
+      toDTO: sinon.stub(),
+    };
+    authProviderStub = { tokenize: sinon.stub() };
+
+    createUserUseCase = new CreateUserUseCase(
+      createUserRepositoryStub,
+      geoLibStub,
+      userMapperStub,
+      authProviderStub,
+    );
+  });
+
+  it("should convert address to coordinates if only address is provided", async () => {
+    const userData = { address: faker.location.streetAddress() };
+    const mockCoordinates = {
+      lng: faker.location.longitude(),
+      lat: faker.location.latitude(),
+    };
+    const userEntity = {
+      ...userData,
+      coordinates: [mockCoordinates.lng, mockCoordinates.lat],
+    };
+    const createdUser = { id: faker.string.uuid() };
+    const token = faker.string.uuid();
+
+    userMapperStub.toEntity.returns(userEntity);
+    geoLibStub.getCoordinatesFromAddress.resolves(mockCoordinates);
+    createUserRepositoryStub.execute.resolves(createdUser);
+    authProviderStub.tokenize.returns(token);
+    userMapperStub.toDTO.returns(createdUser);
+
+    const result = await createUserUseCase.execute(userData);
+
+    expect(geoLibStub.getCoordinatesFromAddress.calledWith(userData.address)).to
+      .be.true;
+    expect(createUserRepositoryStub.execute.calledWith(userEntity)).to.be.true;
+    expect(result).to.deep.equal({ user: createdUser, token });
+  });
+
+  it("should convert coordinates to address if only coordinates are provided", async () => {
+    const userData = {
+      coordinates: [faker.location.longitude(), faker.location.latitude()],
+    };
+    const mockAddress = faker.location.streetAddress();
+    const userEntity = { ...userData, address: mockAddress };
+    const createdUser = { id: faker.string.uuid() };
+    const token = faker.string.uuid();
+
+    userMapperStub.toEntity.returns(userEntity);
+    geoLibStub.getAddressFromCoordinates.resolves(mockAddress);
+    createUserRepositoryStub.execute.resolves(createdUser);
+    authProviderStub.tokenize.returns(token);
+    userMapperStub.toDTO.returns(createdUser);
+
+    const result = await createUserUseCase.execute(userData);
+
+    expect(
+      geoLibStub.getAddressFromCoordinates.calledWith(userData.coordinates),
+    ).to.be.true;
+    expect(createUserRepositoryStub.execute.calledWith(userEntity)).to.be.true;
+    expect(result).to.deep.equal({ user: createdUser, token });
   });
 });
