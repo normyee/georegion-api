@@ -1,3 +1,5 @@
+import { RegionNameError } from "../common/errors";
+
 export class Region {
   private _id: string;
   private _name: string;
@@ -8,12 +10,12 @@ export class Region {
     id: string,
     name: string,
     userId: string,
-    geometry: { type: string; coordinates: number[][][] } 
+    geometry: { type: string; coordinates: number[][][] },
   ) {
     this._id = id;
     this._name = name;
     this._userId = userId;
-    this._geometry = geometry; 
+    this._geometry = geometry;
   }
 
   get id(): string {
@@ -26,7 +28,7 @@ export class Region {
 
   set name(value: string) {
     if (!value || value.trim().length === 0) {
-      throw new Error("region name cannot be empty");
+      throw new RegionNameError();
     }
     this._name = value;
   }

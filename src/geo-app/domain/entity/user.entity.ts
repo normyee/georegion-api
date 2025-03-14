@@ -1,4 +1,4 @@
-import { GeoCoordinates } from "../../infra/providers/geo/geo-lib.provider";
+import { GeoCoordinates } from "../../../shared/types";
 
 export class User {
   private _address?: string;
@@ -10,7 +10,7 @@ export class User {
     public email: string,
     address?: string,
     coordinates?: GeoCoordinates,
-    public regions: string[] = []
+    public regions: string[] = [],
   ) {
     this._address = address;
     this._coordinates = coordinates;
