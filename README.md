@@ -199,11 +199,11 @@ http://localhost:3003/regions-> Cria uma região nova associada a um user. *OBS*
 ```
 http://localhost:3003/containing -> Retorna listagem de regiões contendo um ponto específico ou dentro de um raio definido
 ```
-**Parâmetros da rota**
-`lng` -> longitude
-`lat` -> latitude
-`page` -> página atual da busca
-`limit` -> limitar a quantidade por página
+- **Parâmetros da rota**
+  - `lng` -> longitude
+  - `lat` -> latitude
+  - `page` -> página atual da busca
+  - `limit` -> limitar a quantidade por página
 
 #### Response esperado:
 ```
@@ -251,10 +251,10 @@ http://localhost:3003/containing -> Retorna listagem de regiões contendo um pon
 ```
 http://localhost:3003/containing -> Retorna listagem de regiões contendo um ponto específico ou dentro de um raio definido
 ```
-**Parâmetros da rota**
-`lng` -> longitude
-`lat` -> latitude
-`km_distance` -> distância em quilômetros do ponto
-`filter_user` -> `true` para filtragem regiões por usuário
-`page` -> página atual da busca
-`limit` -> limitar a quantidade por página
+- **Parâmetros da rota**
+  - `lng` -> longitude
+  - `lat` -> latitude
+  - `km_distance` -> distância em quilômetros do ponto
+  - `filter_user` -> `true` para filtragem regiões por usuário
+  - `page` -> página atual da busca
+  - `limit` -> limitar a quantidade por página
