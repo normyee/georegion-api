@@ -249,7 +249,7 @@ http://localhost:3003/containing -> Retorna listagem de regiões contendo um pon
 ----------------------------------------------------------------------------------
 `GET - /regions/near?lng=-48.451393226238935&lat=-1.402774657344807&km_distance=10&page=1&limit=10`
 ```
-http://localhost:3003/containing -> Retorna listagem de regiões contendo um ponto específico ou dentro de um raio definido
+http://localhost:3003/containing -> Retorna listagem de regiões contendo um ponto específico dentro de um raio definido em quilômetros
 ```
 - **Parâmetros da rota**
   - `lng` -> longitude
