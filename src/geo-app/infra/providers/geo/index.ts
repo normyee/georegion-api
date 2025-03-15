@@ -2,7 +2,7 @@ import {
   NetworkAxiosAdapter,
 } from "../../../../shared/network.provider";
 import { GeoAddress, GeoCoordinates, GeoResponse, INetwork, LoggerInstance } from "../../../../shared/types";
-import { IGeoLib } from "../../../abstractions/geo-lib.interface";
+import { IGeoLib } from "../../../application/abstractions/geo-lib.interface";
 import { Logger } from "../logger";
 
 const logger = new Logger().getLogger();

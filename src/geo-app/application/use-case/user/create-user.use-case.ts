@@ -3,8 +3,8 @@ import { InvalidUserLocationError } from "../../common/errors";
 import { User } from "../../../domain/entity/user.entity";
 import { IMapper } from "../../../domain/common/mapper.interface";
 import { ICreateUserRepository } from "../../../domain/repositories/users/create-user.repository";
-import { IGeoLib } from "../../../abstractions/geo-lib.interface";
 import { IAuthProvider } from "../../../../shared/types";
+import { IGeoLib } from "../../abstractions/geo-lib.interface";
 
 export class CreateUserUseCase {
   constructor(

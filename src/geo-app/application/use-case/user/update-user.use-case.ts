@@ -3,7 +3,7 @@ import { InvalidUserLocationError } from "../../common/errors";
 import { User } from "../../../domain/entity/user.entity";
 import { IMapper } from "../../../domain/common/mapper.interface";
 import { IUpdateUserRepository } from "../../../domain/repositories/users/update-user.repository";
-import { IGeoLib } from "../../../abstractions/geo-lib.interface";
+import { IGeoLib } from "../../abstractions/geo-lib.interface";
 
 export class UpdateUserUseCase {
   constructor(
