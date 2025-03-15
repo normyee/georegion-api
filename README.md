@@ -38,9 +38,9 @@ Integrei a `API` `OpenStreetMap` para conversão entre coordenadas e endereços.
 - Utilização de **Mongo Sessions** para transações. ✔️
 - Documentação completa da API por ✔️.
 - Cobertura de código (baixa cobertura de testes) ⚠️. 
-- Injeção de dependências utilizando `typedi` para melhor modularidade e testabilidade
+- Injeção de dependências utilizando `typedi` para melhor modularidade e testabilidade ✔️
 - Implementação de logs estruturados com `Pino` para melhor monitoramento ✔️.
-- Uso do `Zod` para garantir a integridade das configurações das variáveis de ambiente.
+- Uso do `Zod` para garantir a integridade das configurações das variáveis de ambiente. ✔️
 
 ### Como executar em minha máquina?
 
