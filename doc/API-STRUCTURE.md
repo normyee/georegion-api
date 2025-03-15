@@ -18,16 +18,16 @@ Para `logging`, utilizamos `Pino`, garantindo rastreabilidade e monitoramento ef
 
 **`./src/geo-app`**: É o único e o módulo principal do projeto.
 
-- `.src/application`: É a camada `application` que faz ponte entre `domain`.
+- **`.src/application`**: É a camada `application` que faz ponte entre `domain`.
   - `applicaton/abstractions`: Lugar que fica as abstrações da camada.
     - `abstractions/geo-lib.interface`: Contrato da funcionalidade que faz conversão de endereço ↔ coordenadas.
 
-- `application/common`: É onde organiza código mais generalista e compartilhado entre a camada.
-  - `common/dtos`: Onde fica os `DTOS` `region.dto.ts` e `user.dto.ts`.
-  - `common/errors`: Agrupamento de classes personalizadas de erro a nível `application`.
-  - `common/mappers`: Agrupamento de conversão `DTO` ↔ `ENTITY` com `user.mapper.ts` e `region.mapper.ts`.
+  - `application/common`: É onde organiza código mais generalista e compartilhado entre a camada.
+    - `common/dtos`: Onde fica os `DTOS` `region.dto.ts` e `user.dto.ts`.
+    - `common/errors`: Agrupamento de classes personalizadas de erro a nível `application`.
+    - `common/mappers`: Agrupamento de conversão `DTO` ↔ `ENTITY` com `user.mapper.ts` e `region.mapper.ts`.
 
-- `application/use-case`: Camada dos casos de uso.
+  - **`application/use-case`**: Camada dos casos de uso.
 
   - **`use-case/region`: Casos de uso para `regiões`**.
     - `region/create-region.use-case.ts`: Cria uma região nova. Caso `userId`, capturado via `Bearer Token`, não esteja presente, é lançado o erro `MissingItemError`.
@@ -44,3 +44,30 @@ Para `logging`, utilizamos `Pino`, garantindo rastreabilidade e monitoramento ef
     - `user/get-user.use-case.ts`: Retorna um **`usuário`** pelo `id`.
     - `user/login-user.use-case.ts`: Caso de uso para obter novo `token` a partir do e-mail usado para criar um **`usuário`**.
     - `user/update-user.use-case.ts`: Atualiza um **`usuário`**, mas caso ambos `coordinates` e `address` sejam passados, é lançado o erro `InvalidUserLocationError`.
+
+- **`.src/domain`**: É a camada `domain` da aplicação.
+    - `domain/common`: Código comum entre a camada `domain`.
+      - `common/errors`: Agrupamento de erros personalizados da camada `domain`.
+      - `common/mapper.interface.ts`: Contrato para os `mappers`.
+
+    - `domain/entity`: Local onde fica as entidades `region.entity.ts` e `user.entity.ts`.
+      - `entity`: Local onde fica as entidades `region.entity.ts` e `user.entity.ts`.
+
+    - `domain/repositories`: Onde ficam os contratos de `repositories` de `regions` e `users`.
+
+- **`.src/infra`**: Camada de `infraestrutura` da aplicação, onde fica as implementações técnicas.
+    - `infra/controllers`: Onde ficam os controllers `region.controller.ts` e `user.controller.ts`.
+
+    - `infra/database/orm/mongoose`: Onde ficam as implementações dos `repositories`, `models` e classe de conexão com `MongoDB`.
+      - `mongoose/models`: Onde fica as `models` do banco de dados.
+        - `mongoose/models/common/base.ts`: Onde fica a classe base para as `models`.
+        - `mongoose/models/region.ts`: Model para `region`.
+        - `mongoose/models/user.ts`: Model para `user`.
+        - `mongoose/models/repositories`: Local que organiza as implementações dos `repositories` para `regions` e `users`.
+        - `mongoose/models/index.ts`: Classe para inicialização e conexão com o `MongoDB`.
+
+    - `infra/middlewares/auth-validation.middleware`: Classe que faz validação dos `Bearer Tokens` e proteção de rotas.
+
+    - `infra/providers`: Onde estão as implementações para `IGeoLib` com `OpenStreetMap` e `Loggers` com `Pino`.
+
+    - `infra/geo-app-module`: Módulo responsável por gerenciar a injeção de dependências com typedi.
