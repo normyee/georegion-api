@@ -59,7 +59,7 @@ Integrei a `API` `OpenStreetMap` para conversão entre coordenadas e endereços.
 - [Como o Backend está estruturado?](doc/API-STRUCTURE.md/)
 
 ### Endpoints
-- Utilize `https://geojson.io/` para obter `pontos` de um local ou polígono em `GeoJson` de uma área geométrica nas endpoints de criação de usuário caso passe `coordinates` em vez do `address`, e para obter pontos geométricos para criação de `regions`.
+- Utilize `https://geojson.io/` para obter `coordenadas` de um local nas endpoints de criação de usuário (`POST /users`) caso passe `coordinates` em vez do `address`. Se apenas passar o nome de um endereço válido, e automaticamente as coordenadas do endereço serão obtidas. Também use `https://geojson.io/` para obter pontos geométricos para criação de `regions`.
 
 - **CRUD completo para rota /users**.
 `POST - /users`
