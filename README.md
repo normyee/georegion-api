@@ -1,18 +1,6 @@
-# OZmap Challenge: Solução
-![ozmap-horizontal-e1732892700771](https://github.com/user-attachments/assets/e7cb8fe3-3343-4c98-8324-2b7419336d70)
-
 Desenvolvi o Backend utilizando `Clean Architecture` e modelagem `DDD`, aplicando injeção de dependências pelo módulo `app-geo.module.ts` e implementando inversão de dependências. Usei o padrão `Repository` para abstrair a persistência e `MongoDB` com `sessions` para garantir a atomicidade das transações. A autenticação é implementada com `JWT`. Para conteinerização, utilizei `Docker Compose`.
 
 Integrei a `API` `OpenStreetMap` para conversão entre coordenadas e endereços. As rotas foram criadas com decorators e implementei um logger eficiente usando Pino. A solução conta com várias abstrações para garantir flexibilidade e manutenção fácil.
-
-# Especificações Técnicas
-
-- **Node.js**: Versão 20+.
-- **Banco de Dados**: Mongo 7+.
-- **ORM**: Mongoose / Typegoose.
-- **Linguagem**: Typescript.
-- **Formatação e Linting**: Eslint + Prettier.
-- **Comunicação com MongoDB**: Container MongoDB estabelecido com ReplicaSet SingleNode.
 
 ## 🔍 **Funcionalidades Implementadas**
 
