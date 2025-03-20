@@ -1,4 +1,4 @@
-### Solução
+## Solução 🚀
 
 Desenvolvi o Backend utilizando `Clean Architecture` e modelagem `DDD`, aplicando injeção de dependências pelo módulo `app-geo.module.ts` e implementando inversão de dependências. Usei o padrão `Repository` para abstrair a persistência e `MongoDB` com `sessions` para garantir a atomicidade das transações. A autenticação é implementada com `JWT`. Para conteinerização, utilizei `Docker Compose`.
 
